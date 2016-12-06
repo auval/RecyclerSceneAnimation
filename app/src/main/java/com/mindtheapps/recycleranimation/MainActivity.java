@@ -6,11 +6,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * @author amir
+ */
 public class MainActivity extends AppCompatActivity {
     RecyclerView list;
     MyAdapter myAdapter;
@@ -55,13 +59,34 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder(new MyRowView(parent));
+            final MyRowView myRowView = new MyRowView(parent);
+
+            return new MyViewHolder(myRowView);
         }
 
         @Override
-        public void onBindViewHolder(MyViewHolder holder, int position) {
+        public void onBindViewHolder(final MyViewHolder holder, final int position) {
             holder.myRow.setColor(data.get(position).getColor());
+            holder.myRow.setBig(data.get(position).isBig());
+
+            holder.myRow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (data.get(position).isBig()) {
+                        // delete row
+                        data.remove(position);
+
+                    } else {
+                        // enlarge row
+                        data.get(position).setBig(true);
+                    }
+                    notifyDataSetChanged();
+
+                }
+            });
         }
+
 
         @Override
         public long getItemId(int position) {
@@ -77,7 +102,14 @@ public class MainActivity extends AppCompatActivity {
         public void addRow() {
             Random random = new Random();
             int c = random.nextInt();
-            data.add(0,new MyRowData(c|0xff000000));// the bitwise "or" clears the transparency
+            data.add(0, new MyRowData(c | 0xff000000));// the bitwise "or" clears the transparency
+
+            // set first row to large and the rest to small
+            data.get(0).setBig(true);
+            for (int i = 1; i < data.size(); i++) {
+                data.get(i).setBig(false);
+            }
+
             notifyDataSetChanged();
         }
     }

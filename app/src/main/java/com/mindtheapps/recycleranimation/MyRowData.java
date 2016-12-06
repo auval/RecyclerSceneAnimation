@@ -5,6 +5,7 @@ package com.mindtheapps.recycleranimation;
  */
 
 public class MyRowData {
+    private boolean big;
     private int color;
 
     public MyRowData(int color) {
@@ -14,5 +15,13 @@ public class MyRowData {
 
     public int getColor() {
         return color;
+    }
+
+    public void setBig(boolean big) {
+        this.big = big;
+    }
+
+    public boolean isBig() {
+        return big;
     }
 }
