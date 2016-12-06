@@ -49,14 +49,23 @@ public class MainActivity extends AppCompatActivity {
 
         static ArrayList<MyRowData> data = new ArrayList<>();
 
+        MyAdapter() {
+            setHasStableIds(true);
+        }
+
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder(new MyRowView(parent.getContext()));
+            return new MyViewHolder(new MyRowView(parent));
         }
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
             holder.myRow.setColor(data.get(position).getColor());
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return data.get(position).hashCode();
         }
 
         @Override
@@ -68,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         public void addRow() {
             Random random = new Random();
             int c = random.nextInt();
-            data.add(new MyRowData(c));
+            data.add(0,new MyRowData(c|0xff000000));// the bitwise "or" clears the transparency
             notifyDataSetChanged();
         }
     }
