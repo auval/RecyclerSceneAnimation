@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         list = (RecyclerView) findViewById(R.id.list);
         myAdapter = new MyAdapter();
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
         list.setLayoutManager(mLayoutManager);
         list.setAdapter(myAdapter);
 
@@ -66,16 +68,15 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final MyViewHolder holder, final int position) {
-            holder.myRow.setColor(data.get(position).getColor());
-            holder.myRow.setBig(data.get(position).isBig());
+            holder.myRow.bindThis(data.get(position));
 
             holder.myRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     if (data.get(position).isBig()) {
-                        // delete row
-                        data.remove(position);
+                        // shrink row
+                        data.get(position).setBig(false);
 
                     } else {
                         // enlarge row
@@ -83,6 +84,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                     notifyDataSetChanged();
 
+                }
+            });
+            holder.myRow.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // delete row
+                    data.remove(position);
+                    notifyDataSetChanged();
+                    return false;
                 }
             });
         }
@@ -101,13 +111,17 @@ public class MainActivity extends AppCompatActivity {
 
         public void addRow() {
             Random random = new Random();
-            int c = random.nextInt();
-            data.add(0, new MyRowData(c | 0xff000000));// the bitwise "or" clears the transparency
+            int c = random.nextInt() | 0xff000000;
+            MyRowData d = new MyRowData()
+                    .setBig(true)
+                    .setColor(c)
+                    .setColorName("#" + Integer.toHexString(c));
 
             // set first row to large and the rest to small
-            data.get(0).setBig(true);
+            data.add(0, d);
+
             for (int i = 1; i < data.size(); i++) {
-                data.get(i).setBig(false);
+                data.get(i).setBig(false).notifyChange();
             }
 
             notifyDataSetChanged();
