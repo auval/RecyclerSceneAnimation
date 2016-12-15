@@ -6,8 +6,6 @@ import android.support.transition.ChangeBounds;
 import android.support.transition.Scene;
 import android.support.transition.Transition;
 import android.support.transition.TransitionManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -40,6 +38,11 @@ public class MyRowView extends ConstraintLayout {
         asSBind = LayoutRowAlertBinding.inflate(layoutInflater, vg, false);
         asLBind = LayoutRowAlertLargerBinding.inflate(layoutInflater, vg,
                 false);
+
+        // a trick to force match_parent on this row
+        asLBind.rowGv.getLayoutParams().width = vg.getWidth();
+        asSBind.rowGv.getLayoutParams().width = vg.getWidth();
+
         mSceneLarge = new Scene(this, asLBind.getRoot());
 
         mSceneSmall = new Scene(this, asSBind.getRoot());
