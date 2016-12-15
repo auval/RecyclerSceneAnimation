@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +17,7 @@ import java.util.Random;
  * @author amir
  */
 public class MainActivity extends AppCompatActivity {
-    RecyclerView list;
+
     MyAdapter myAdapter;
 
     @Override
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        list = (RecyclerView) findViewById(R.id.list);
+        RecyclerView list = (RecyclerView) findViewById(R.id.list);
         myAdapter = new MyAdapter();
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -32,8 +33,10 @@ public class MainActivity extends AppCompatActivity {
         list.setLayoutManager(mLayoutManager);
         list.setAdapter(myAdapter);
 
+        myAdapter.itemTouchHelper.attachToRecyclerView(list);
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,6 +57,25 @@ public class MainActivity extends AppCompatActivity {
     private static class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
         static ArrayList<MyRowData> data = new ArrayList<>();
+
+        /**
+         * swipe to dismiss
+         */
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //Remove swiped item from list and notify the RecyclerView
+                data.remove(viewHolder.getAdapterPosition());
+                notifyDataSetChanged();
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+
 
         MyAdapter() {
             setHasStableIds(true);

@@ -10,8 +10,6 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
-        android:clipChildren="false"
-
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="32dp"
@@ -21,6 +19,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:background="@drawable/border_shape"
+        android:clipChildren="false"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

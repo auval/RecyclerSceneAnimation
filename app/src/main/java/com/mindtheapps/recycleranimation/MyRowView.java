@@ -6,6 +6,8 @@ import android.support.transition.ChangeBounds;
 import android.support.transition.Scene;
 import android.support.transition.Transition;
 import android.support.transition.TransitionManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -52,6 +54,7 @@ public class MyRowView extends ConstraintLayout {
          */
 
     }
+
 
     public void bindThis(MyRowData data) {
 
