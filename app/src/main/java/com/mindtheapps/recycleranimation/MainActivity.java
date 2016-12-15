@@ -1,7 +1,6 @@
 package com.mindtheapps.recycleranimation;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -109,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
                                     boolean isCurrentlyActive) {
 
 
-
                 MyRowView myRow = ((MyViewHolder) viewHolder).myRow;
 
                 // 0,0 is the top left corner of the RecyclerView
@@ -118,8 +116,9 @@ public class MainActivity extends AppCompatActivity {
 
                 final int h = myRow.getHeight();
 
-                // ok: draws the line at the correct place
-//                c.drawRect(0,myRow.getTop(),recyclerView.getRight(),myRow.getBottom(),drawUnder);
+                // trick to change the trash color according to the location
+                float percent = Math.abs(dX / myRow.getWidth());
+                DrawableCompat.setTint(rubbish, evaluateRgb(percent, 0xff_00_00_00, 0xff_ff_00_00));
 
                 if (dX > 0) {
                     // moving right
@@ -144,9 +143,35 @@ public class MainActivity extends AppCompatActivity {
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
 
-
         MyAdapter() {
             setHasStableIds(true);
+        }
+
+        /**
+         * adapted from ArgbEvaluator, which does too much castings from Object to Integer.
+         *
+         * @param fraction
+         * @param startValue
+         * @param endValue
+         * @return
+         */
+        public static int evaluateRgb(float fraction, int startValue, int endValue) {
+            int startInt = startValue;
+            int startA = (startInt >> 24) & 0xff;
+            int startR = (startInt >> 16) & 0xff;
+            int startG = (startInt >> 8) & 0xff;
+            int startB = startInt & 0xff;
+
+            int endInt = endValue;
+            int endA = (endInt >> 24) & 0xff;
+            int endR = (endInt >> 16) & 0xff;
+            int endG = (endInt >> 8) & 0xff;
+            int endB = endInt & 0xff;
+
+            return ((startA + (int) (fraction * (endA - startA))) << 24) |
+                    ((startR + (int) (fraction * (endR - startR))) << 16) |
+                    ((startG + (int) (fraction * (endG - startG))) << 8) |
+                    ((startB + (int) (fraction * (endB - startB))));
         }
 
         @Override
@@ -155,11 +180,11 @@ public class MainActivity extends AppCompatActivity {
 
             rubbish = ContextCompat.getDrawable(parent.getContext(), R.drawable.ic_delete_black_24dp);
 
-            rubbish = DrawableCompat.wrap(rubbish);
-
             // mutate():
             // A mutable drawable is guaranteed to not share its state with any other drawable
-            DrawableCompat.setTint(rubbish.mutate(), Color.RED);
+            rubbish = DrawableCompat.wrap(rubbish).mutate();
+
+//            DrawableCompat.setTint(rubbish, Color.RED);
 
             return new MyViewHolder(myRowView);
         }
